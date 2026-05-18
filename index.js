@@ -10,7 +10,7 @@ app.use(express.json());
 
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion,ObjectId  } = require('mongodb');
 const uri = process.env.MONGO_URI
 const port = process.env.PORT
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -31,6 +31,22 @@ async function run() {
         const result = await ideacollection.find().toArray()
   res.send(result)
 })
+
+   app.get('/idea/:id',async (req, res) => {
+    try {
+      const {id} = req.params
+      const query={
+        _id:new ObjectId(id)
+      }
+      const result =await ideacollection.findOne(query)
+      res.send(result)
+    } catch (error) {
+      res.status(500).send({error:"something went wrong"})
+    }
+})
+
+
+
 
     await client.connect();
     // Send a ping to confirm a successful connection
