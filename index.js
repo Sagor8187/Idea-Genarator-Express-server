@@ -45,8 +45,16 @@ async function run() {
     }
 })
 
-
-
+ app.post('/idea',async (req, res) => {
+    try {
+      const data = req.body
+    
+      const result =await ideacollection.insertOne(data)
+      res.send(result)
+    } catch (error) {
+      res.status(500).send({error:"something went wrong"})
+    }
+})
 
     await client.connect();
     // Send a ping to confirm a successful connection
