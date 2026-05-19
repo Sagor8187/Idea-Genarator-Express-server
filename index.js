@@ -88,16 +88,16 @@ app.post("/comment",async(req,res)=>{
   }
 })
 
-// // all commnet show api
-// app.get("/comment",async(req,res)=>{
-//   try {
+// all commnet show api
+app.get("/comment",async(req,res)=>{
+  try {
     
-//     const result = comentcollection.find().toArray()
-//     res.send(result)
-//   } catch (error) {
-//      res.status(500).send({error:"something went wrong"})
-//   }
-// })
+    const result = comentcollection.find().toArray()
+    res.send(result)
+  } catch (error) {
+     res.status(500).send({error:"something went wrong"})
+  }
+})
 
 // app.get("/my-comment/:id",async(req,res)=>{
 //   try {
