@@ -28,10 +28,40 @@ async function run() {
     const comentcollection = db.collection("comment");
 
     // all idea show api
-    app.get("/idea", async (req, res) => {
-      const result = await ideacollection.find().toArray();
-      res.send(result);
-    });
+    // app.get("/idea", async (req, res) => {
+    //   const result = await ideacollection.find().toArray();
+    //   res.send(result);
+    // });
+
+ app.get("/idea", async (req, res) => {
+  try {
+    const { search, category } = req.query;
+
+    let query = {};
+
+    // 🔍 SEARCH
+    if (search) {
+      query.ideaTitle = {
+        $regex: search,
+        $options: "i",
+      };
+    }
+
+    // 📂 CATEGORY
+    if (category) {
+      query.category = category;
+    }
+
+    const result = await ideacollection
+      .find(query)
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    res.send(result);
+  } catch (error) {
+    res.status(500).send({ error: "something went wrong" });
+  }
+});
 
     // idea details api
     app.get("/idea/:id", async (req, res) => {
