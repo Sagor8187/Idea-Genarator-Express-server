@@ -85,9 +85,21 @@ async function run() {
     });
 
     // all commnet show api
-    app.get("/comment", async (req, res) => {
+    app.get("/comment/:id", async (req, res) => {
       try {
-        const result = await comentcollection.find().toArray();
+        const {id}=req.params
+        const result = await comentcollection.find({postId:id}).toArray();
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ error: "something went wrong" });
+      }
+    });
+
+    // delete comment 
+    app.delete("/comment/:id", async (req, res) => {
+      try {
+        const {id}=req.params
+        const result = await comentcollection.deleteOne({_id:new ObjectId(id)})
         res.send(result);
       } catch (error) {
         res.status(500).send({ error: "something went wrong" });
