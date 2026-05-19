@@ -24,14 +24,18 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    await client.connect();
     const db = client.db("idea")
     const ideacollection = db.collection("all_idea")
+    const comentcollection = db.collection("comment")
     
+    // all idea show api
     app.get('/idea',async (req, res) => {
         const result = await ideacollection.find().toArray()
   res.send(result)
 })
 
+// idea details api 
    app.get('/idea/:id',async (req, res) => {
     try {
       const {id} = req.params
@@ -46,6 +50,7 @@ async function run() {
     }
 })
 
+//  idea post api 
  app.post('/idea',async (req, res) => {
     try {
       const data = req.body
@@ -57,6 +62,8 @@ async function run() {
     }
 })
 
+
+// user specefic idea show api
 app.get('/my-idea/:id',async (req, res) => {
     try {
       const {id} = req.params
@@ -69,9 +76,44 @@ app.get('/my-idea/:id',async (req, res) => {
     }
 })
 
-    // await client.connect();
+// comment post api
+
+app.post("/comment",async(req,res)=>{
+  try {
+    const data = req.body
+    const result = comentcollection.insertOne(data)
+    res.send(result)
+  } catch (error) {
+     res.status(500).send({error:"something went wrong"})
+  }
+})
+
+// // all commnet show api
+// app.get("/comment",async(req,res)=>{
+//   try {
+    
+//     const result = comentcollection.find().toArray()
+//     res.send(result)
+//   } catch (error) {
+//      res.status(500).send({error:"something went wrong"})
+//   }
+// })
+
+// app.get("/my-comment/:id",async(req,res)=>{
+//   try {
+//     const {id} = req.params
+//     const result = comentcollection.find({userId:id}).toArray()
+//     res.send(result)
+//   } catch (error) {
+//      res.status(500).send({error:"something went wrong"})
+//   }
+// })
+
+
+
+    await client.connect();
     // Send a ping to confirm a successful connection
-    // await client.db("admin").command({ ping: 1 });
+    await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
