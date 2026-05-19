@@ -99,15 +99,15 @@ app.get("/comment",async(req,res)=>{
   }
 })
 
-// app.get("/my-comment/:id",async(req,res)=>{
-//   try {
-//     const {id} = req.params
-//     const result = comentcollection.find({userId:id}).toArray()
-//     res.send(result)
-//   } catch (error) {
-//      res.status(500).send({error:"something went wrong"})
-//   }
-// })
+app.get("/my-comment/:id",async(req,res)=>{
+  try {
+    const {id} = req.params
+    const result = comentcollection.find({userId:id}).toArray()
+    res.send(result)
+  } catch (error) {
+     res.status(500).send({error:"something went wrong"})
+  }
+})
 
 
 
