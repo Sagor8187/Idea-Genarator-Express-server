@@ -39,6 +39,7 @@ async function run() {
         _id:new ObjectId(id)
       }
       const result =await ideacollection.findOne(query)
+   
       res.send(result)
     } catch (error) {
       res.status(500).send({error:"something went wrong"})
@@ -56,9 +57,21 @@ async function run() {
     }
 })
 
-    await client.connect();
+app.get('/my-idea/:id',async (req, res) => {
+    try {
+      const {id} = req.params
+   
+      const result =await ideacollection.find({userId:id}).toArray()
+      res.send(result)
+    } catch (error) {
+      
+      res.status(500).send({error:"something went wrong"})
+    }
+})
+
+    // await client.connect();
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
