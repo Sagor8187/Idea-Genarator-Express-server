@@ -60,6 +60,54 @@ async function run() {
       }
     });
 
+    // update post idea
+
+    app.patch("/idea/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const updatedData = req.body;
+
+    const result = await ideacollection.updateOne(
+      {
+        _id: new ObjectId(id),
+      },
+      {
+        $set: updatedData,
+      }
+    );
+
+    res.send(result);
+
+  } catch (error) {
+    res.status(500).send({
+      error: "something went wrong",
+    });
+  }
+});
+
+// delete idea post 
+
+app.delete("/idea/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await ideacollection.deleteOne({
+      _id: new ObjectId(id),
+    });
+
+    res.send({
+      success: true,
+      deletedCount: result.deletedCount,
+    });
+
+  } catch (error) {
+    res.status(500).send({
+      error: "something went wrong",
+    });
+  }
+});
+
     // user specefic idea show api
     app.get("/my-idea/:id", async (req, res) => {
       try {
