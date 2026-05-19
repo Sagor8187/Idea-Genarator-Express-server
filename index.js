@@ -106,6 +106,38 @@ async function run() {
       }
     });
 
+    // comment update
+
+    app.patch("/comment/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { post } = req.body;
+
+    const filter = {
+      _id: new ObjectId(id),
+    };
+
+    const updatedDoc = {
+      $set: {
+        post: post,
+        createdAt: new Date().toISOString(),
+      },
+    };
+
+    const result = await comentcollection.updateOne(
+      filter,
+      updatedDoc
+    );
+
+    res.send(result);
+
+  } catch (error) {
+    res.status(500).send({
+      error: "something went wrong",
+    });
+  }
+});
+
     app.get("/my-comment/:id", async (req, res) => {
       try {
         const { id } = req.params;
