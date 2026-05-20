@@ -9,6 +9,7 @@ dotenv.config();
 app.use(express.json());
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const { createRemoteJWKSet, jwtVerify } = require("jose-cjs");
 const uri = process.env.MONGO_URI;
 const port = process.env.PORT;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -19,6 +20,30 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+const JWKS =createRemoteJWKSet(
+  new URL('http://localhost:3000/api/auth/jwks')
+)
+const verifytoken =async (req,res,next)=>{
+  const authheader = req?.headers?.authorization
+  
+  const token = authheader?.split(" ")[1]
+  if(!authheader){
+    return res.status(401).send({massage:"unauthorize"})
+  }
+  if(!token){
+    return res.status(401).send({massage:"unauthorize"})
+  }
+  
+  try {
+      const {payload} =await jwtVerify(token,JWKS)
+       next()
+  } catch (error) {
+     return res.status(403).send({massage:"Forbidden"})
+  }
+
+ 
+}
 
 async function run() {
   try {
@@ -39,7 +64,7 @@ async function run() {
 
     let query = {};
 
-    // 🔍 SEARCH
+    //  SEARCH
     if (search) {
       query.ideaTitle = {
         $regex: search,
@@ -47,7 +72,7 @@ async function run() {
       };
     }
 
-    // 📂 CATEGORY
+    //  CATEGORY
     if (category) {
       query.category = category;
     }
@@ -64,7 +89,7 @@ async function run() {
 });
 
     // idea details api
-    app.get("/idea/:id", async (req, res) => {
+    app.get("/idea/:id",verifytoken, async (req, res) => {
       try {
         const { id } = req.params;
         const query = {
