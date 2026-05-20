@@ -58,6 +58,22 @@ async function run() {
     //   res.send(result);
     // });
 
+    app.get("/home-idea", async (req, res) => {
+  try {
+    const result = await ideacollection
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .toArray();
+
+    res.send(result);
+  } catch (error) {
+    res.status(500).send({
+      error: "something went wrong",
+    });
+  }
+});
+
  app.get("/idea", async (req, res) => {
   try {
     const { search, category } = req.query;
@@ -104,7 +120,7 @@ async function run() {
     });
 
     //  idea post api
-    app.post("/idea", async (req, res) => {
+    app.post("/idea",verifytoken, async (req, res) => {
       try {
         const data = req.body;
 
@@ -117,7 +133,7 @@ async function run() {
 
     // update post idea
 
-    app.patch("/idea/:id", async (req, res) => {
+    app.patch("/idea/:id",verifytoken, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -143,7 +159,7 @@ async function run() {
 
 // delete idea post 
 
-app.delete("/idea/:id", async (req, res) => {
+app.delete("/idea/:id",verifytoken, async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -164,7 +180,7 @@ app.delete("/idea/:id", async (req, res) => {
 });
 
     // user specefic idea show api
-    app.get("/my-idea/:id", async (req, res) => {
+    app.get("/my-idea/:id",verifytoken, async (req, res) => {
       try {
         const { id } = req.params;
 
@@ -177,7 +193,7 @@ app.delete("/idea/:id", async (req, res) => {
 
     // comment post api
 
-    app.post("/comment", async (req, res) => {
+    app.post("/comment",verifytoken, async (req, res) => {
       try {
         const data = req.body;
         const result = await comentcollection.insertOne(data);
@@ -199,7 +215,7 @@ app.delete("/idea/:id", async (req, res) => {
     });
 
     // delete comment 
-    app.delete("/comment/:id", async (req, res) => {
+    app.delete("/comment/:id",verifytoken, async (req, res) => {
       try {
         const {id}=req.params
         const result = await comentcollection.deleteOne({_id:new ObjectId(id)})
@@ -211,7 +227,7 @@ app.delete("/idea/:id", async (req, res) => {
 
     // comment update
 
-    app.patch("/comment/:id", async (req, res) => {
+    app.patch("/comment/:id",verifytoken, async (req, res) => {
   try {
     const { id } = req.params;
     const { post } = req.body;
@@ -241,7 +257,9 @@ app.delete("/idea/:id", async (req, res) => {
   }
 });
 
-    app.get("/my-comment/:id", async (req, res) => {
+
+
+    app.get("/my-comment/:id",verifytoken, async (req, res) => {
       try {
         const { id } = req.params;
         const result = await comentcollection.find({ userId: id }).toArray();
